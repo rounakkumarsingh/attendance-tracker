@@ -78,18 +78,48 @@ def summary():
 
 @cli.command()
 @click.option('--subject', prompt='Subject name')
-@click.option('--date', prompt='Date (YYYY-MM-DD)')
-def add_class(subject, date):
+@click.option('--date', 'date_str', prompt='Date (YYYY-MM-DD)')
+def add_class(subject, date_str):
     """Adds an extra class."""
-    # Logic to add a class will be implemented here
-    click.echo(f"Adding extra class for {subject} on {date}")
+    try:
+        date.fromisoformat(date_str)
+    except ValueError:
+        click.echo("Error: Date must be in YYYY-MM-DD format.")
+        return
+
+    attendance_data = data_manager.get_attendance_data()
+    records = attendance_data['records']
+
+    status = click.prompt(f"Status for {subject} on {date_str}", type=click.Choice(['p', 'a']), default='p')
+    
+    records.append({
+        "date": date_str,
+        "subject": subject,
+        "status": "present" if status == 'p' else "absent"
+    })
+
+    data_manager.save_attendance_data(attendance_data)
+    click.echo(f"Added extra class for {subject} on {date_str}")
 
 @cli.command()
-@click.argument('date')
-def add_holiday(date):
+@click.argument('date_str')
+def add_holiday(date_str):
     """Marks a specific date as a holiday."""
-    # Logic to add a holiday
-    click.echo(f"Adding {date} as a holiday.")
+    try:
+        date.fromisoformat(date_str)
+    except ValueError:
+        click.echo("Error: Date must be in YYYY-MM-DD format.")
+        return
+
+    attendance_data = data_manager.get_attendance_data()
+    holidays = attendance_data['holidays']
+    
+    if date_str in holidays:
+        click.echo(f"{date_str} is already a holiday.")
+    else:
+        holidays.append(date_str)
+        data_manager.save_attendance_data(attendance_data)
+        click.echo(f"Added {date_str} as a holiday.")
 
 @cli.command()
 def edit():

@@ -44,11 +44,22 @@ def get_attendance_data():
         source_file = PROJECT_ROOT / 'attendance.json'
         if source_file.exists():
             shutil.copy(source_file, ATTENDANCE_FILE)
+            with open(ATTENDANCE_FILE, 'r') as f:
+                data = json.load(f)
         else:
-            return {'records': [], 'holidays': []}
+            data = {'records': [], 'holidays': [], 'semester_start_date': None}
+    else:
+        with open(ATTENDANCE_FILE, 'r') as f:
+            data = json.load(f)
 
-    with open(ATTENDANCE_FILE, 'r') as f:
-        return json.load(f)
+    if 'semester_start_date' not in data:
+        data['semester_start_date'] = None
+    if 'holidays' not in data:
+        data['holidays'] = []
+    if 'records' not in data:
+        data['records'] = []
+
+    return data
 
 def save_attendance_data(data):
     """Saves the attendance data to the JSON file."""
@@ -60,5 +71,17 @@ def get_last_run_date():
     """Gets the last date attendance was recorded."""
     data = get_attendance_data()
     if not data['records']:
-        return None
+        return get_semester_start_date()
     return max(record['date'] for record in data['records'])
+
+def get_semester_start_date():
+    """Gets the semester start date."""
+    data = get_attendance_data()
+    return data.get('semester_start_date')
+
+def set_semester_start_date(start_date):
+    """Sets the semester start date."""
+    data = get_attendance_data()
+    data['semester_start_date'] = start_date
+    save_attendance_data(data)
+

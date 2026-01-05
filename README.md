@@ -10,6 +10,9 @@ A command-line application to proactively track your academic attendance. The ap
 - **Flexible Scheduling:** Add extra classes and holidays.
 - **Attendance Statistics:** Calculates and displays attendance percentages for each subject and shows how many classes are needed to reach 75%.
 - **Data Management:** Edit past attendance records.
+- **Semester Start Date:** Set a semester start date to only track attendance from that day onwards.
+- **Cancelled Classes:** Mark classes as "cancelled" so they don't affect your attendance percentage.
+- **Holiday on Prompt:** Mark a day as a holiday directly when prompted for attendance.
 
 ## Setup and Installation
 
@@ -52,16 +55,25 @@ A command-line application to proactively track your academic attendance. The ap
       "Sunday": []
     }
     ```
+5. **Set the semester start date:**
+    Before you start tracking your attendance, set the semester start date.
+    ```bash
+    attendance set-start-date YYYY-MM-DD
+    ```
 
 ## Usage
 
 The application provides several commands to manage your attendance.
 
--   **`attendance check`**: The main command to run daily. It prompts for missed days and the current day's attendance.
+-   **`attendance check`**: The main command to run daily. It prompts for missed days and the current day's attendance. When prompted for attendance, you can enter:
+    - `p` for present
+    - `a` for absent
+    - `c` for cancelled
 -   **`attendance summary`**: Displays the attendance statistics for all subjects.
 -   **`attendance edit`**: Starts an interactive prompt to modify a past attendance record.
--   **`attendance add-class`**: Adds an extra class for a subject on a specific date.
--   **`attendance add-holiday <YYYY-MM-DD>`**: Marks a specific date as a holiday.
+-   **`attendance add-class`**: Adds an extra class for a subject on a specific date. The date format is `YYYY-MM-DD`.
+-   **`attendance add-holiday <YYYY-MM-DD>`**: Marks a specific date as a holiday. The date format is `YYYY-MM-DD`.
+-   **`attendance set-start-date <YYYY-MM-DD>`**: Sets the semester start date. The date format is `YYYY-MM-DD`.
 
 ### Example: Setting up a Daily Cron Job
 

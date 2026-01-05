@@ -1,0 +1,22 @@
+{
+  "Monday": [
+    "Math",
+    "Physics"
+  ],
+  "Tuesday": [
+    "Chemistry"
+  ],
+  "Wednesday": [
+    "Math",
+    "Physics"
+  ],
+  "Thursday": [
+    "Chemistry"
+  ],
+  "Friday": [
+    "Math",
+    "Biology"
+  ],
+  "Saturday": [],
+  "Sunday": []
+}

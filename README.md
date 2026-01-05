@@ -99,20 +99,36 @@ Commands for viewing attendance data.
 -   **`attendance view edit`**: Starts an interactive prompt to modify a past attendance record.
 
 
-### Example: Setting up a Daily Cron Job
+### Automatic Prompts on Shell Startup (Recommended)
 
-To have the application prompt you automatically, you can set up a cron job.
+Since the `attendance record check` command is interactive (it asks you for input), it won't work correctly as a background `cron` job. Instead, it's best to run it whenever you open a new terminal session. The script is smart enough to only prompt you if it hasn't already recorded attendance for the current day.
 
-1.  Open your crontab file:
-    ```bash
-    crontab -e
-    ```
+#### For Fish Shell
 
-2.  Add a line to run the `attendance record check` command on a schedule. For example, to run it every hour from 9 AM to 5 PM on weekdays:
-    ```
-    0 9-17 * * 1-5 /path/to/your/attendance-tracker/.venv/bin/attendance record check
-    ```
-    *Make sure to replace `/path/to/your/attendance-tracker` with the absolute path to the project directory.*
+Add a configuration file in `~/.config/fish/conf.d/`:
+
+```fish
+# ~/.config/fish/conf.d/attendance_tracker.fish
+/path/to/your/attendance-tracker/.venv/bin/attendance record check
+```
+
+#### For Bash
+
+Add the following line to the end of your `~/.bashrc`:
+
+```bash
+/path/to/your/attendance-tracker/.venv/bin/attendance record check
+```
+
+#### For Zsh
+
+Add the following line to the end of your `~/.zshrc`:
+
+```bash
+/path/to/your/attendance-tracker/.venv/bin/attendance record check
+```
+
+*Note: Replace `/path/to/your/attendance-tracker` with the absolute path to your project directory.*
 
 ## Accessing the CLI from anywhere
 

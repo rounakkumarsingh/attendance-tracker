@@ -247,11 +247,26 @@ def prompt_for_attendance(day, subjects, records, holidays):
     """Prompts the user for attendance for a given day and subjects."""
     click.echo(f"Attendance for {day.strftime('%A, %Y-%m-%d')}:")
 
-    # Option to mark the whole day as a holiday
-    if click.confirm(f"  Was this day a holiday?", default=False):
+    choice = click.prompt(
+        "  Select option (h: holiday, p: all present, a: all absent, r: partial/regular)",
+        type=click.Choice(['h', 'p', 'a', 'r']),
+        default='p'
+    )
+
+    if choice == 'h':
         holidays.append(day.isoformat())
         return
+    elif choice == 'p' or choice == 'a':
+        status = "present" if choice == 'p' else "absent"
+        for subject in subjects:
+            records.append({
+                "date": day.isoformat(),
+                "subject": subject,
+                "status": status
+            })
+        return
 
+    # Partial / Regular
     for subject in subjects:
         status = click.prompt(f"  {subject}", type=click.Choice(['p', 'a', 'c']), default='p')
         if status != 'c': # Don't record cancelled classes

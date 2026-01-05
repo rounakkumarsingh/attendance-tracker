@@ -109,7 +109,7 @@ Add a configuration file in `~/.config/fish/conf.d/`:
 
 ```fish
 # ~/.config/fish/conf.d/attendance_tracker.fish
-/path/to/your/attendance-tracker/.venv/bin/attendance record check
+/path/to/your/attendance-tracker/.venv/bin/attendance record check --quiet
 ```
 
 #### For Bash
@@ -117,7 +117,7 @@ Add a configuration file in `~/.config/fish/conf.d/`:
 Add the following line to the end of your `~/.bashrc`:
 
 ```bash
-/path/to/your/attendance-tracker/.venv/bin/attendance record check
+/path/to/your/attendance-tracker/.venv/bin/attendance record check --quiet
 ```
 
 #### For Zsh
@@ -125,7 +125,7 @@ Add the following line to the end of your `~/.bashrc`:
 Add the following line to the end of your `~/.zshrc`:
 
 ```bash
-/path/to/your/attendance-tracker/.venv/bin/attendance record check
+/path/to/your/attendance-tracker/.venv/bin/attendance record check --quiet
 ```
 
 *Note: Replace `/path/to/your/attendance-tracker` with the absolute path to your project directory.*

@@ -14,18 +14,21 @@ def record_group():
     pass
 
 @record_group.command(name='check')
-def check():
+@click.option('--quiet', is_flag=True, help='Only show output when user input is required.')
+def check(quiet):
     """Check for missed days and prompt for today's attendance."""
     semester_start_date = data_manager.get_semester_start_date()
     semester_end_date = data_manager.get_semester_end_date()
 
     if not semester_start_date:
-        click.echo("Semester start date is not set. Please set it using 'config set-start-date' command.")
+        if not quiet:
+            click.echo("Semester start date is not set. Please set it using 'config set-start-date' command.")
         return
 
     today = date.today()
     if semester_end_date and today > date.fromisoformat(semester_end_date):
-        click.echo("Semester has ended. No more attendance tracking.")
+        if not quiet:
+            click.echo("Semester has ended. No more attendance tracking.")
         return
 
     timetable = data_manager.get_timetable()
@@ -55,11 +58,12 @@ def check():
                 todays_records = [r for r in records if r['date'] == today.isoformat()]
                 if not todays_records:
                     prompt_for_attendance(today, subjects_today, records, holidays)
-                else:
+                elif not quiet:
                     click.echo("Attendance for today has already been recorded.")
 
     data_manager.save_attendance_data(attendance_data)
-    click.echo("Attendance data saved.")
+    if not quiet:
+        click.echo("Attendance data saved.")
 
 @record_group.command(name='add-class')
 @click.option('--subject', prompt='Subject name')

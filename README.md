@@ -68,11 +68,13 @@ The application provides several commands to manage your attendance, organized i
 ### `record`
 Commands for recording attendance.
 
--   **`attendance record check`**: The main command to run daily. It prompts for missed days and the current day's attendance. When prompted for a day, you can enter:
+-   **`attendance record check`**: The main command to run daily. It prompts for missed days and the current day's attendance. You can use the `--quiet` flag to suppress non-essential messages; however, the date and subject context will always be shown when a prompt is required.
+    When prompted for a day, you can enter:
     - `h` to mark the whole day as a holiday
     - `p` to mark all classes for the day as present
     - `a` to mark all classes for the day as absent
     - `r` to manually record attendance for each class (partial/regular)
+    - `s` to skip/postpone the remaining check for now
     When recording manually for each class, you can enter:
     - `p` for present
     - `a` for absent

@@ -40,14 +40,18 @@ def check(quiet):
     missed_days = logic.get_missed_days(last_run_date_str, holidays, semester_start_date)
 
     if missed_days:
-        click.echo("You have some missed days to account for.")
+        if not quiet:
+            click.echo("You have some missed days to account for.")
         for day in missed_days:
             if semester_end_date and day > date.fromisoformat(semester_end_date):
                 continue
             day_name = day.strftime('%A')
             subjects = timetable.get(day_name, [])
             if subjects:
-                prompt_for_attendance(day, subjects, records, holidays)
+                if not prompt_for_attendance(day, subjects, records, holidays):
+                    click.echo("Attendance checking postponed.")
+                    data_manager.save_attendance_data(attendance_data)
+                    return
 
     # Handle today
     if today.isoformat() not in holidays and today.weekday() < 5 and today.isoformat() >= semester_start_date:
@@ -57,7 +61,10 @@ def check(quiet):
             if subjects_today:
                 todays_records = [r for r in records if r['date'] == today.isoformat()]
                 if not todays_records:
-                    prompt_for_attendance(today, subjects_today, records, holidays)
+                    if not prompt_for_attendance(today, subjects_today, records, holidays):
+                         click.echo("Attendance checking postponed.")
+                         data_manager.save_attendance_data(attendance_data)
+                         return
                 elif not quiet:
                     click.echo("Attendance for today has already been recorded.")
 
@@ -248,18 +255,24 @@ def edit():
     click.echo("Record updated.")
 
 def prompt_for_attendance(day, subjects, records, holidays):
-    """Prompts the user for attendance for a given day and subjects."""
+    """
+    Prompts the user for attendance for a given day and subjects.
+    Returns True to continue, False to stop/postpone.
+    """
     click.echo(f"Attendance for {day.strftime('%A, %Y-%m-%d')}:")
 
     choice = click.prompt(
-        "  Select option (h: holiday, p: all present, a: all absent, r: partial/regular)",
-        type=click.Choice(['h', 'p', 'a', 'r']),
+        "  Select option (h: holiday, p: all present, a: all absent, r: partial/regular, s: skip/postpone)",
+        type=click.Choice(['h', 'p', 'a', 'r', 's']),
         default='p'
     )
 
+    if choice == 's':
+        return False
+
     if choice == 'h':
         holidays.append(day.isoformat())
-        return
+        return True
     elif choice == 'p' or choice == 'a':
         status = "present" if choice == 'p' else "absent"
         for subject in subjects:
@@ -268,7 +281,7 @@ def prompt_for_attendance(day, subjects, records, holidays):
                 "subject": subject,
                 "status": status
             })
-        return
+        return True
 
     # Partial / Regular
     for subject in subjects:
@@ -279,6 +292,7 @@ def prompt_for_attendance(day, subjects, records, holidays):
                 "subject": subject,
                 "status": "present" if status == 'p' else "absent"
             })
+    return True
 
 cli.add_command(record_group)
 cli.add_command(config_group)

@@ -124,8 +124,37 @@ def add_holiday(date_str):
 @cli.command()
 def edit():
     """Edit a past attendance record."""
-    # Logic to edit a record
-    click.echo("Editing past attendance...")
+    attendance_data = data_manager.get_attendance_data()
+    records = attendance_data['records']
+
+    if not records:
+        click.echo("No records to edit.")
+        return
+
+    for i, record in enumerate(records):
+        click.echo(f"{i+1}: {record['date']} - {record['subject']} ({record['status']})")
+
+    try:
+        record_num = click.prompt("Enter the number of the record to edit", type=int)
+        if not (1 <= record_num <= len(records)):
+            click.echo("Invalid number.")
+            return
+    except click.exceptions.Abort:
+        return # User pressed Ctrl+C
+
+    record_to_edit = records[record_num - 1]
+
+    click.echo("Editing record:")
+    click.echo(f"  Date: {record_to_edit['date']}")
+    click.echo(f"  Subject: {record_to_edit['subject']}")
+    click.echo(f"  Status: {record_to_edit['status']}")
+    
+    new_status = click.prompt("New status", type=click.Choice(['p', 'a']), default=record_to_edit['status'][0])
+    
+    record_to_edit['status'] = 'present' if new_status == 'p' else 'absent'
+    
+    data_manager.save_attendance_data(attendance_data)
+    click.echo("Record updated.")
 
 
 if __name__ == '__main__':

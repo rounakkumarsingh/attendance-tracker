@@ -47,13 +47,15 @@ def get_attendance_data():
             with open(ATTENDANCE_FILE, 'r') as f:
                 data = json.load(f)
         else:
-            data = {'records': [], 'holidays': [], 'semester_start_date': None}
+            data = {'records': [], 'holidays': [], 'semester_start_date': None, 'semester_end_date': None}
     else:
         with open(ATTENDANCE_FILE, 'r') as f:
             data = json.load(f)
 
     if 'semester_start_date' not in data:
         data['semester_start_date'] = None
+    if 'semester_end_date' not in data:
+        data['semester_end_date'] = None
     if 'holidays' not in data:
         data['holidays'] = []
     if 'records' not in data:
@@ -83,5 +85,50 @@ def set_semester_start_date(start_date):
     """Sets the semester start date."""
     data = get_attendance_data()
     data['semester_start_date'] = start_date
+    save_attendance_data(data)
+
+def get_semester_end_date():
+    """Gets the semester end date."""
+    data = get_attendance_data()
+    return data.get('semester_end_date')
+
+def set_semester_end_date(end_date):
+    """Sets the semester end date."""
+    data = get_attendance_data()
+    data['semester_end_date'] = end_date
+    save_attendance_data(data)
+
+def add_holiday(holiday_date):
+    """Adds a holiday to the list of holidays."""
+    data = get_attendance_data()
+    if holiday_date not in data['holidays']:
+        data['holidays'].append(holiday_date)
+        save_attendance_data(data)
+
+def remove_holiday(holiday_date):
+    """Removes a holiday from the list of holidays."""
+    data = get_attendance_data()
+    if holiday_date in data['holidays']:
+        data['holidays'].remove(holiday_date)
+        save_attendance_data(data)
+
+def cancel_class(date_str, subject):
+    """Cancels a class for a given date and subject."""
+    data = get_attendance_data()
+    records = data['records']
+    
+    # Check if a record for this class already exists
+    for record in records:
+        if record['date'] == date_str and record['subject'] == subject:
+            record['status'] = 'cancelled'
+            break
+    else:
+        # If no record exists, create one
+        records.append({
+            "date": date_str,
+            "subject": subject,
+            "status": "cancelled"
+        })
+        
     save_attendance_data(data)
 

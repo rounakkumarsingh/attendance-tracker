@@ -16,17 +16,17 @@ def get_missed_days(last_run_date_str, holidays, semester_start_date_str):
     start_date = date.fromisoformat(semester_start_date_str)
     
     if not last_run_date_str:
-        last_run_date = start_date
+        current_date = start_date
     else:
         last_run_date = date.fromisoformat(last_run_date_str)
-
-    if last_run_date < start_date:
-        last_run_date = start_date
+        if last_run_date < start_date:
+            current_date = start_date
+        else:
+            current_date = last_run_date + timedelta(days=1)
 
     today = date.today()
     missed_days = []
     
-    current_date = last_run_date + timedelta(days=1)
     while current_date < today:
         if current_date.weekday() < 5 and current_date.isoformat() not in holidays:
             missed_days.append(current_date)

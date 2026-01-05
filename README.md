@@ -63,17 +63,36 @@ A command-line application to proactively track your academic attendance. The ap
 
 ## Usage
 
-The application provides several commands to manage your attendance.
+The application provides several commands to manage your attendance, organized into logical groups.
 
--   **`attendance check`**: The main command to run daily. It prompts for missed days and the current day's attendance. When prompted for attendance, you can enter:
+### `record`
+Commands for recording attendance.
+
+-   **`attendance record check`**: The main command to run daily. It prompts for missed days and the current day's attendance. When prompted for attendance, you can enter:
     - `p` for present
     - `a` for absent
     - `c` for cancelled
--   **`attendance summary`**: Displays the attendance statistics for all subjects.
--   **`attendance edit`**: Starts an interactive prompt to modify a past attendance record.
--   **`attendance add-class`**: Adds an extra class for a subject on a specific date. The date format is `YYYY-MM-DD`.
--   **`attendance add-holiday <YYYY-MM-DD>`**: Marks a specific date as a holiday. The date format is `YYYY-MM-DD`.
--   **`attendance set-start-date <YYYY-MM-DD>`**: Sets the semester start date. The date format is `YYYY-MM-DD`.
+-   **`attendance record add-class`**: Adds an extra class for a subject on a specific date. The date format is `YYYY-MM-DD`.
+-   **`attendance record cancel-class`**: Cancels a class for a subject on a specific date. The date format is `YYYY-MM-DD`.
+
+### `config`
+Commands for configuration.
+
+-   **`attendance config set-start-date <YYYY-MM-DD>`**: Sets the semester start date. The date format is `YYYY-MM-DD`.
+-   **`attendance config set-end-date <YYYY-MM-DD>`**: Sets the semester end date. The date format is `YYYY-MM-DD`.
+
+### `holiday`
+Commands for managing holidays.
+
+-   **`attendance holiday add <YYYY-MM-DD>`**: Marks a specific date as a holiday. The date format is `YYYY-MM-DD`.
+-   **`attendance holiday remove <YYYY-MM-DD>`**: Removes a holiday. The date format is `YYYY-MM-DD`.
+
+### `view`
+Commands for viewing attendance data.
+
+-   **`attendance view summary`**: Displays the attendance statistics for all subjects.
+-   **`attendance view edit`**: Starts an interactive prompt to modify a past attendance record.
+
 
 ### Example: Setting up a Daily Cron Job
 
@@ -84,11 +103,29 @@ To have the application prompt you automatically, you can set up a cron job.
     crontab -e
     ```
 
-2.  Add a line to run the `attendance check` command on a schedule. For example, to run it every hour from 9 AM to 5 PM on weekdays:
+2.  Add a line to run the `attendance record check` command on a schedule. For example, to run it every hour from 9 AM to 5 PM on weekdays:
     ```
-    0 9-17 * * 1-5 /path/to/your/attendance-tracker/.venv/bin/attendance check
+    0 9-17 * * 1-5 /path/to/your/attendance-tracker/.venv/bin/attendance record check
     ```
     *Make sure to replace `/path/to/your/attendance-tracker` with the absolute path to the project directory.*
+
+## Accessing the CLI from anywhere
+
+To make the `attendance` command available from anywhere in your terminal, you can create a symbolic link to the executable in a directory that is in your `PATH`. A common directory for user-specific executables is `~/.local/bin`.
+
+1. **Ensure `~/.local/bin` is in your `PATH`**
+    You can check if `~/.local/bin` is in your `PATH` by running:
+    ```bash
+    echo $PATH
+    ```
+    If you do not see `/home/your-user/.local/bin` in the output, you will need to add it to your shell's configuration file (e.g. `~/.bashrc`, `~/.zshrc`, or `~/.config/fish/config.fish`).
+
+2. **Create the symbolic link**
+    From within the project directory, run the following command:
+    ```bash
+    ln -s "$(pwd)/.venv/bin/attendance" ~/.local/bin/attendance
+    ```
+    Now you should be able to run the `attendance` command from any directory.
 
 ## Data Storage
 

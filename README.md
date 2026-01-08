@@ -8,11 +8,71 @@ A command-line application to proactively track your academic attendance. The ap
 - **Missed Day Catch-up:** Prompts for any missed days since the last session.
 - **Timetable-Driven:** Based on a user-provided `timetable.json`.
 - **Flexible Scheduling:** Add extra classes and holidays.
-- **Attendance Statistics:** Calculates and displays attendance percentages for each subject and shows how many classes are needed to reach 75%.
+- **Rich Summary:** Displays a color-coded table with attendance statistics for each subject.
+- **Attendance Statistics:** 
+    - Calculates and displays attendance percentages.
+    - Shows how many classes are needed to reach 75%.
+    - Shows how many classes can be missed (bunked) while maintaining 75%.
 - **Data Management:** Edit past attendance records.
 - **Semester Start Date:** Set a semester start date to only track attendance from that day onwards.
 - **Cancelled Classes:** Mark classes as "cancelled" so they don't affect your attendance percentage.
 - **Holiday on Prompt:** Mark a day as a holiday directly when prompted for attendance.
+
+## Usage
+
+The application provides several commands to manage your attendance, organized into logical groups.
+
+### `view`
+Commands for viewing attendance data.
+
+-   **`attendance view summary`**: Displays the attendance statistics for all subjects in a rich table.
+
+    ```
+                                   Attendance Summary                               
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+    ┃ Subject                                     ┃ Percentage ┃ Status ┃ Bunkable Classes ┃ Notes                                  ┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+    │ Compiler Design - SK                        │ 100.00%    │ >= 75% │ 0                │                                        │
+    │ Computer Networks - CG                      │ 50.00%     │ < 75%  │ 0                │ Attend next 2 classes to reach 75%     │
+    │ Computer Networks Laboratory - CG           │ 100.00%    │ >= 75% │ 0                │                                        │
+    │ High Performance Computer Architecture - PG │ 0.00%      │ < 75%  │ 0                │ Attend next 3 classes to reach 75%     │
+    │ Machine Learning - AB                       │ 50.00%     │ < 75%  │ 0                │ Attend next 2 classes to reach 75%     │
+    │ Machine Learning Laboratory - AB            │ 100.00%    │ >= 75% │ 0                │                                        │
+    │ Software Engineering - RN                   │ 50.00%     │ < 75%  │ 0                │ Attend next 2 classes to reach 75%     │
+    │ Software Engineering Laboratory - RN        │ 100.00%    │ >= 75% │ 0                │                                        │
+    └─────────────────────────────────────────────┴────────────┴────────┴──────────────────┴────────────────────────────────────────┘
+    ```
+-   **`attendance view edit`**: Starts an interactive prompt to modify a past attendance record.
+
+### `record`
+Commands for recording attendance.
+
+-   **`attendance record check`**: The main command to run daily. It prompts for missed days and the current day's attendance. You can use the `--quiet` flag to suppress non-essential messages; however, the date and subject context will always be shown when a prompt is required.
+    When prompted for a day, you can enter:
+    - `h` to mark the whole day as a holiday
+    - `p` to mark all classes for the day as present
+    - `a` to mark all classes for the day as absent
+    - `r` to manually record attendance for each class (partial/regular)
+    - `s` to skip/postpone the remaining check for now
+    When recording manually for each class, you can enter:
+    - `p` for present
+    - `a` for absent
+    - `c` for cancelled
+-   **`attendance record add-class`**: Adds an extra class for a subject on a specific date. The date format is `YYYY-MM-DD`.
+-   **`attendance record cancel-class`**: Cancels a class for a subject on a specific date. The date format is `YYYY-MM-DD`.
+
+### `config`
+Commands for configuration.
+
+-   **`attendance config set-start-date <YYYY-MM-DD>`**: Sets the semester start date. The date format is `YYYY-MM-DD`.
+-   **`attendance config set-end-date <YYYY-MM-DD>`**: Sets the semester end date. The date format is `YYYY-MM-DD`.
+
+### `holiday`
+Commands for managing holidays.
+
+-   **`attendance holiday add <YYYY-MM-DD>`**: Marks a specific date as a holiday. The date format is `YYYY-MM-DD`.
+-   **`attendance holiday remove <YYYY-MM-DD>`**: Removes a holiday. The date format is `YYYY-MM-DD`.
+
 
 ## Setup and Installation
 
@@ -58,50 +118,10 @@ A command-line application to proactively track your academic attendance. The ap
 5. **Set the semester start date:**
     Before you start tracking your attendance, set the semester start date.
     ```bash
-    attendance set-start-date YYYY-MM-DD
+    attendance config set-start-date YYYY-MM-DD
     ```
 
-## Usage
-
-The application provides several commands to manage your attendance, organized into logical groups.
-
-### `record`
-Commands for recording attendance.
-
--   **`attendance record check`**: The main command to run daily. It prompts for missed days and the current day's attendance. You can use the `--quiet` flag to suppress non-essential messages; however, the date and subject context will always be shown when a prompt is required.
-    When prompted for a day, you can enter:
-    - `h` to mark the whole day as a holiday
-    - `p` to mark all classes for the day as present
-    - `a` to mark all classes for the day as absent
-    - `r` to manually record attendance for each class (partial/regular)
-    - `s` to skip/postpone the remaining check for now
-    When recording manually for each class, you can enter:
-    - `p` for present
-    - `a` for absent
-    - `c` for cancelled
--   **`attendance record add-class`**: Adds an extra class for a subject on a specific date. The date format is `YYYY-MM-DD`.
--   **`attendance record cancel-class`**: Cancels a class for a subject on a specific date. The date format is `YYYY-MM-DD`.
-
-### `config`
-Commands for configuration.
-
--   **`attendance config set-start-date <YYYY-MM-DD>`**: Sets the semester start date. The date format is `YYYY-MM-DD`.
--   **`attendance config set-end-date <YYYY-MM-DD>`**: Sets the semester end date. The date format is `YYYY-MM-DD`.
-
-### `holiday`
-Commands for managing holidays.
-
--   **`attendance holiday add <YYYY-MM-DD>`**: Marks a specific date as a holiday. The date format is `YYYY-MM-DD`.
--   **`attendance holiday remove <YYYY-MM-DD>`**: Removes a holiday. The date format is `YYYY-MM-DD`.
-
-### `view`
-Commands for viewing attendance data.
-
--   **`attendance view summary`**: Displays the attendance statistics for all subjects.
--   **`attendance view edit`**: Starts an interactive prompt to modify a past attendance record.
-
-
-### Automatic Prompts on Shell Startup (Recommended)
+## Automatic Prompts on Shell Startup (Recommended)
 
 Since the `attendance record check` command is interactive (it asks you for input), it won't work correctly as a background `cron` job. Instead, it's best to run it whenever you open a new terminal session. The script is smart enough to only prompt you if it hasn't already recorded attendance for the current day.
 

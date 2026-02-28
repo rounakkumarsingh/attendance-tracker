@@ -248,6 +248,8 @@ def summary():
 
     table = Table(title="Attendance Summary")
     table.add_column("Subject", style="cyan", no_wrap=True)
+    table.add_column("Total Classes", style="blue")
+    table.add_column("Presents", style="green")
     table.add_column("Percentage", style="magenta")
     table.add_column("Status", style="green")
     table.add_column("Bunkable Classes", style="yellow")
@@ -257,6 +259,13 @@ def summary():
         percentage = logic.calculate_attendance_percentage(records, subject)
         needed = logic.calculate_classes_needed(records, subject)
         missable = logic.calculate_classes_to_miss(records, subject)
+
+        # Calculate total classes and presents for this subject
+        subject_records = [
+            r for r in records if r["subject"] == subject and r["status"] != "cancelled"
+        ]
+        total_classes = len(subject_records)
+        presents = sum(1 for r in subject_records if r["status"] == "present")
 
         status = ">= 75%" if percentage >= 75 else "< 75%"
 
@@ -269,6 +278,8 @@ def summary():
 
         table.add_row(
             subject,
+            str(total_classes),
+            str(presents),
             f"{percentage:.2f}%",
             status,
             bunkable,
